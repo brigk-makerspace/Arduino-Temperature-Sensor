@@ -1,0 +1,1 @@
+{"values": [{"light": "446", "temp": "23.70", "humidity": "44.00"}]}

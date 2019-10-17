@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GIESSBERT</title>
+
+<link href='https://fonts.googleapis.com/css?family=Orbitron:400,700' rel='stylesheet'>
+<link rel='stylesheet' type='text/css' href='lib/style/style.css'>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
+
+</head>
+<body>
+
+<h1>GIEßBERT</h1>
+<p>live data</p>
+<p>&nbsp;</p>
+
+<script>
+   var data;
+
+    $.ajax({
+        type: 'GET',
+        url: 'lib/js/json.js',
+        data: data,
+        async: false,
+        beforeSend: function (xhr) {
+          if (xhr && xhr.overrideMimeType) {
+            xhr.overrideMimeType('application/json;charset=utf-8');
+          }
+        },
+        dataType: 'json',
+        success: function (data) {
+          console.log(data.values[0].temp);
+          write(data);
+        }
+      });
+
+   function write(data) {
+     document.write("<div class='flex-grid'><div class='col'><a href=''>TEMP<br>" + data.values[0].temp + "<br><p></a></div><div class='col'><a href=''>HUMIDITY<br>" + data.values[0].humidity + "<br><p></a></div><div class='col'><a href=''>LIGHTS<br>" + data.values[0].light + "<br><p></a></div></div>");
+  }
+    
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
