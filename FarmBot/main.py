@@ -3,16 +3,52 @@ import RPi.GPIO as GPIO
 from time import sleep
 import serial
 import json
+from datetime import datetime
+import sqlite3
+
 
 
 
 
 #Functions
 
-def writeJSON(data):
-    with open('/var/www/html/lib/js/json.js', 'w') as outfile:
-        json.dump(data, outfile)
-    print(data)
+def getData():
+
+    DHTvalues = readTemperature()
+    split = DHTvalues.find("/")
+    humidity = DHTvalues[0:split]
+    temp = DHTvalues[split+1:len(DHTvalues)-2]
+    light = readAnalogPin(0)
+
+    data = "(" + temp + "," + humidity + "," + light[0:light.find("#")] + ");"
+
+    writeSQL(data)
+
+    #data = {}
+    #data['values'] = []
+
+    #data['values'].append({
+    #    'humidity': humidity,
+    #    'temp': temp,
+    #    'light': light[0:light.find("#")]
+    #})
+    #with open('/var/www/html/lib/js/json.js', 'a+') as outfile:
+    #    json.dump(data, outfile)
+    #print(data)
+
+def writeSQL(data):
+
+    connection = sqlite3.connect("farmbot.db")
+
+    cursor = connection.cursor()
+
+    sql_command = "INSERT INTO farmbot (temp, humidity, light) VALUES  %s" % data
+    print(sql_command)
+    cursor.execute(sql_command)
+    
+    connection.commit()
+
+    connection.close()
     
 def readLine(port):
     s = ""
@@ -75,24 +111,12 @@ except Exception:
 #Main loop
 print("Starting Loop...")
 while True:
-    values = readTemperature()
-    split = values.find("/")
-    humidity = values[0:split]
-    temp = values[split+1:len(values)-2]
-    light = readAnalogPin(0)
+    
 
-    data = {}
-    data['values'] = []
+    getData()
 
-    data['values'].append({
-        'humidity': humidity,
-        'temp': temp,
-        'light': light[0:light.find("#")]
-    })
+    sleep(10)
 
-    writeJSON(data)
-
-    sleep(5)
 
 
 
